@@ -1,5 +1,14 @@
 {
-  "name": "Copy of WithLove - Digital Letters",
-  "description": "A beautiful and minimalist web application for creating and sharing digital handwritten letters with custom paper, ink, and stickers.",
+  "name": "WithLove - Digital Stationery",
+  "description": "A minimalist web application for creating and sharing digital handwritten letters with custom paper, ink, and stickers.",
+  "repository": "https://github.com/example/withlove",
+  "keywords": [
+    "react",
+    "gemini-api",
+    "digital-letters",
+    "stationery"
+  ],
+  "author": "World-Class Engineer",
+  "license": "MIT",
   "requestFramePermissions": []
 }
