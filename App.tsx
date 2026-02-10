@@ -13,6 +13,31 @@ const INITIAL_LETTER_DATA: LetterData = {
   stickers: [],
 };
 
+/**
+ * UTF-8 safe Base64 encoding
+ */
+const encodeData = (data: LetterData): string => {
+  const json = JSON.stringify(data);
+  const bytes = new TextEncoder().encode(json);
+  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("");
+  return btoa(binString);
+};
+
+/**
+ * UTF-8 safe Base64 decoding
+ */
+const decodeData = (base64: string): LetterData | null => {
+  try {
+    const binString = atob(base64);
+    const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0)!);
+    const json = new TextDecoder().decode(bytes);
+    return JSON.parse(json);
+  } catch (e) {
+    console.error("Failed to decode shared letter", e);
+    return null;
+  }
+};
+
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>('landing');
   const [letterData, setLetterData] = useState<LetterData>(INITIAL_LETTER_DATA);
@@ -22,12 +47,10 @@ const App: React.FC = () => {
     const params = new URLSearchParams(window.location.search);
     const sharedData = params.get('l');
     if (sharedData) {
-      try {
-        const decoded = JSON.parse(atob(sharedData));
+      const decoded = decodeData(sharedData);
+      if (decoded) {
         setLetterData(decoded);
         setView('receiver');
-      } catch (e) {
-        console.error("Failed to decode shared letter", e);
       }
     }
   }, []);
@@ -41,7 +64,7 @@ const App: React.FC = () => {
 
   const handleDone = () => {
     // Generate the share link and navigate to receiver view
-    const encoded = btoa(JSON.stringify(letterData));
+    const encoded = encodeData(letterData);
     window.history.replaceState({}, document.title, `?l=${encoded}`);
     setView('receiver');
   };
